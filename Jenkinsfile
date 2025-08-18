@@ -26,7 +26,7 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
+        stage('login to docker hub') {
             steps {
                 script {
                     // Build Docker image
@@ -54,7 +54,7 @@ pipeline {
     post {
         always {
             // Clean up Docker images after the build
-            sh 'docker system prune'
+            sh 'docker system prune -f'
         }
         success {
             echo 'Docker image built and pushed successfully!'
