@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'your-image-name'   // Change this to your desired image name
-        DOCKER_TAG = 'latest'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
-        REGISTRY = 'docker.io'             // Change this to your Docker registry (e.g., 'docker.io', 'registry.example.com')
+        DOCKER_IMAGE = 'unicorn'   // Change this to your desired image name
+        DOCKER_TAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
+        REGISTRY = 'mzm1'             // Change this to your Docker registry (e.g., 'docker.io', 'registry.example.com')
         REGISTRY_CREDENTIALS = 'docker-credentials' // Jenkins credentials for Docker registry
     }
 
@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from your repository
-                git 'https://your-repo-url.git'  // Replace with your Git repository URL
+                git 'https://github.com/mohammedzuhair25/ci-jenkins-docker-build.git'  // Replace with your Git repository URL
             }
         }
 
@@ -26,7 +26,16 @@ pipeline {
                 }
             }
         }
-
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh """
+                    docker login
+                    """
+                }
+            }
+        }
         stage('Push Docker Image') {
             steps {
                 script {
