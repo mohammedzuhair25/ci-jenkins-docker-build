@@ -34,9 +34,10 @@ pipeline {
         stage('Login to Nexus Docker Registry') {
             steps {
                 script {
-                    // Login to Nexus Docker registry using Jenkins credentials
-                    docker.withRegistry("http://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS}") {
-                        // Push will be done in the next step
+                withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDENTIALS', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh """
+                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin localhost:7000
+                """
                     }
                 }
             }
