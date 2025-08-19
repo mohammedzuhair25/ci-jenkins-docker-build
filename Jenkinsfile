@@ -6,8 +6,8 @@ pipeline {
         DOCKER_TAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
         NEXUS_URL = 'https://localhost:7000'
         NEXUS_REPO = 'docker-private'  // Change this to your actual Nexus repository name
-        DOCKER_REGISTRY = 'localhost:7000'  // Nexus Docker registry
-        REGISTRY_CREDENTIALS = 'nexus-docker-private' // Jenkins credentials for Docker registry
+        DOCKER_REGISTRY = 'localhost:7001'  // Nexus Docker registry
+        DOCKER_CREDENTIALS = 'nexus-docker-private' // Jenkins credentials for Docker registry
 
 
 
@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Build Docker image
                     sh """
-                    docker build -t ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} .
                     """
                 }
             }
