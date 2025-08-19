@@ -4,8 +4,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'unicorn'   // Change this to your desired image name
         DOCKER_TAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
-        REGISTRY = 'mzm1'             // Change this to your Docker registry (e.g., 'docker.io', 'registry.example.com')
-        REGISTRY_CREDENTIALS = 'docker-credentials' // Jenkins credentials for Docker registry
+        NEXUS_REPO = 'localhost:7001'             // Change this to your Docker registry (e.g., 'docker.io', 'registry.example.com')
+        REGISTRY_CREDENTIALS = 'nexus-docker-private' // Jenkins credentials for Docker registry
+
     }
 
     stages {
@@ -26,26 +27,26 @@ pipeline {
                 }
             }
         }
-        stage('login to docker hub') {
+        stage('Login to Nexus Docker Registry') {
             steps {
                 script {
-                    // Build Docker image
-                    sh """
-                    docker login
-                    """
+                    // Login to Nexus Docker registry using Jenkins credentials
+                    docker.withRegistry("https://${NEXUS_REPO}", "${DOCKER_CREDENTIALS}") {
+                        // Push will be done in the next step
+                    }
                 }
             }
         }
-        stage('Push Docker Image') {
+
+        stage('Push Image to Nexus') {
             steps {
                 script {
-                    // Log in to Docker registry using Jenkins credentials
-                    withDockerRegistry([credentialsId: "${REGISTRY_CREDENTIALS}", url: "https://${REGISTRY}"]) {
-                        // Push Docker image to registry
-                        sh """
-                        docker push ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                        """
-                    }
+                    // Tag the Docker image with Nexus repository details
+                    def image = docker.image("${IMAGE_NAME}:${IMAGE_TAG}")
+                    image.tag("${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    
+                    // Push the Docker image to Nexus
+                    image.push("${IMAGE_TAG}")
                 }
             }
         }
