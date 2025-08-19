@@ -46,12 +46,9 @@ pipeline {
         stage('Push Image to Nexus') {
             steps {
                 script {
-                    // Tag the Docker image with Nexus repository details
-                    def image = docker.image("${IMAGE_NAME}:${IMAGE_TAG}")
-                    image.tag("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}")
-                    
-                    // Push the Docker image to Nexus
-                    image.push("${IMAGE_TAG}")
+                sh """                
+                  docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                """  
                 }
             }
         }
