@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'unicorn'   // Change this to your desired image name
-        DOCKER_TAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
+        DOCKER_IMAGE_TAGTAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
         NEXUS_URL = 'mzm-xps-13-9380:7000'
         NEXUS_REPO = 'docker-private'  // Change this to your actual Nexus repository name
         DOCKER_REGISTRY = 'localhost:7000'  // Nexus Docker registry
@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Build Docker image
                     sh """
-                    docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${DOCKER_TAG} .
+                    docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .
                     """
                 }
             }
