@@ -36,7 +36,7 @@ pipeline {
                 script {
                 withCredentials([usernamePassword(credentialsId: 'nexus-docker-private', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 sh """
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin http://localhost:7000
+                echo "$DOCKER_PASS" | docker login http://localhost:7000
                 """
                     }
                 }
@@ -48,7 +48,7 @@ pipeline {
                 script {
                     // Tag the Docker image with Nexus repository details
                     def image = docker.image("${IMAGE_NAME}:${IMAGE_TAG}")
-                    image.tag("${DOCKER_REGISTRY}/${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    image.tag("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}")
                     
                     // Push the Docker image to Nexus
                     image.push("${IMAGE_TAG}")
