@@ -4,8 +4,12 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'unicorn'   // Change this to your desired image name
         DOCKER_TAG = '${BUILD_NUMBER}'              // You can also use dynamic tags like 'build-${env.BUILD_NUMBER}'
-        NEXUS_REPO = 'localhost:7000'             // Change this to your Docker registry (e.g., 'docker.io', 'registry.example.com')
+        NEXUS_URL = 'https://localhost:7001'
+        NEXUS_REPO = 'docker-private'  // Change this to your actual Nexus repository name
+        DOCKER_REGISTRY = 'localhost:7001'  // Nexus Docker registry
         REGISTRY_CREDENTIALS = 'nexus-docker-private' // Jenkins credentials for Docker registry
+
+
 
     }
 
@@ -31,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Login to Nexus Docker registry using Jenkins credentials
-                    docker.withRegistry("${NEXUS_REPO}", "${DOCKER_CREDENTIALS}") {
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS}") {
                         // Push will be done in the next step
                     }
                 }
@@ -43,7 +47,7 @@ pipeline {
                 script {
                     // Tag the Docker image with Nexus repository details
                     def image = docker.image("${IMAGE_NAME}:${IMAGE_TAG}")
-                    image.tag("${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    image.tag("${DOCKER_REGISTRY}/${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
                     
                     // Push the Docker image to Nexus
                     image.push("${IMAGE_TAG}")
